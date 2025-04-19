@@ -64,6 +64,7 @@ class _ReadSmsState extends State<ReadSms> {
       body: bankMessages.isEmpty
           ? const Center(child: Text('No bank messages found.'))
           : ListView.builder(
+
         itemCount: bankMessages.length,
         itemBuilder: (context, index) {
           final sms = bankMessages[index];

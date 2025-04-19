@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import 'otp_screen.dart';
+import 'otp_login_page.dart';
 
 class OnboardingScreen extends StatefulWidget {
   @override

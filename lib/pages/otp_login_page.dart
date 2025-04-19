@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:new_minor/controllers/login_user.dart';
 import 'otp_verify_page.dart';
 
 class OTPLoginPage extends StatefulWidget {
@@ -12,6 +13,9 @@ class OTPLoginPage extends StatefulWidget {
 class _OTPLoginPageState extends State<OTPLoginPage> {
   final TextEditingController _phoneController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool isPasswordVisible = false;
+  TextEditingController passwordController = TextEditingController();
+  final authService = AuthService();
 
   void _sendOTP() async {
     String phone = _phoneController.text.trim();
@@ -36,7 +40,8 @@ class _OTPLoginPageState extends State<OTPLoginPage> {
       },
       codeAutoRetrievalTimeout: (String verificationId) {},
     );
-  }
+  } //firebase otp logic
+
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +59,44 @@ class _OTPLoginPageState extends State<OTPLoginPage> {
                 labelText: "Enter Phone Number",
                 prefixText: "+91 ",
               ),
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: passwordController,
+              obscureText: !isPasswordVisible,
+              decoration: InputDecoration(
+                hintText: "Enter Password",
+                labelText: "Password",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isPasswordVisible = !isPasswordVisible;
+                    });
+                  },
+                ),
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Password is empty";
+                } else if (value.length < 8) {
+                  return "Password must contain at least 8 characters";
+                } else if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                  return "Password must contain at least one uppercase letter";
+                } else if (!RegExp(r'[0-9]').hasMatch(value)) {
+                  return "Password should contain at least one numeric value";
+                } else if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+                  return "Password should contain at least one special character";
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 20),
             ElevatedButton(
