@@ -16,4 +16,12 @@ class SmsData {
       'dateTime': dateTime,
     };
   }
+
+  factory SmsData.fromJson(Map<String, dynamic> json) {
+    return SmsData(
+      amount: json['amount'] ?? '',
+      refNo: json['refNo'] ?? '',
+      dateTime: json['dateTime'] ?? '',
+    );
+  }
 }

@@ -4,7 +4,7 @@ import '../models/sms_data.dart';
 
 class SmsService {
   static Future<void> sendSmsToBackend(SmsData smsData) async {
-    final url = Uri.parse("https://your-api-url.com/save-sms"); // Replace with actual backend URL
+    final url = Uri.parse("https://your-server.com/api/sms/save");
 
     try {
       final response = await http.post(
@@ -22,4 +22,5 @@ class SmsService {
       print("Error sending SMS to backend: $e");
     }
   }
+
 }
