@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:new_minor/controllers/login_user.dart';
-import 'otp_verify_page.dart';
+import '../models/login_model.dart';
+import 'home_page.dart';
+import 'otp_verify_page.dart'; // Home page after successful login
 
 class OTPLoginPage extends StatefulWidget {
   const OTPLoginPage({super.key});
@@ -40,8 +42,32 @@ class _OTPLoginPageState extends State<OTPLoginPage> {
       },
       codeAutoRetrievalTimeout: (String verificationId) {},
     );
-  } //firebase otp logic
+  }
 
+  // Function to handle login with password and OTP
+  void _loginWithPassword() async {
+    String phone = _phoneController.text.trim();
+    String password = passwordController.text.trim();
+    if (phone.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Enter valid phone number and password")));
+      return;
+    }
+
+    LoginRequest request = LoginRequest(mobileNumber: phone, password: password);
+
+    // Call login API
+    String result = await authService.login(request);
+
+    if (result == "Success") {
+      // Navigate to HomePage after successful login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Login Failed: $result")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +98,7 @@ class _OTPLoginPageState extends State<OTPLoginPage> {
                 ),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    isPasswordVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off,
+                    isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                   ),
                   onPressed: () {
                     setState(() {
@@ -83,24 +107,15 @@ class _OTPLoginPageState extends State<OTPLoginPage> {
                   },
                 ),
               ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return "Password is empty";
-                } else if (value.length < 8) {
-                  return "Password must contain at least 8 characters";
-                } else if (!RegExp(r'[A-Z]').hasMatch(value)) {
-                  return "Password must contain at least one uppercase letter";
-                } else if (!RegExp(r'[0-9]').hasMatch(value)) {
-                  return "Password should contain at least one numeric value";
-                } else if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
-                  return "Password should contain at least one special character";
-                }
-                return null;
-              },
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _sendOTP,
+              onPressed: _loginWithPassword, // Call the login function
+              child: const Text("Login with Password"),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _sendOTP, // Call the OTP function
               child: const Text("Send OTP"),
             ),
           ],
