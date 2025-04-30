@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/user.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://10.0.2.2:8080';
+  static const String _baseUrl = "https://ceaf-103-83-80-38.ngrok-free.app";
 
   static Future<bool> registerUser(User user) async {
     final url = Uri.parse('$_baseUrl/api/users/register');

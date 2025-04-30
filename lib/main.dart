@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:new_minor/pages/SplashScreen.dart';
 import 'package:new_minor/pages/expanse_page.dart';
 
 void main() async {
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
           child: child!,
         );
       },
-      home: ExpensePage()
+      home: SplashScreen()
     );
   }
 }

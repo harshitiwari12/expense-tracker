@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:new_minor/widget/bank_drop_down_button.dart';
+import 'package:new_minor/pages/otp_login_page.dart';
+import 'package:new_minor/read_sms.dart';
 import '../controllers/register_user.dart';
 import '../models/user.dart';
 
@@ -11,193 +12,238 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController mobileController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final mobileController = TextEditingController();
+
   String selectedBank = '';
   bool isPasswordVisible = false;
-  final formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   void handleRegistration() async {
     if (formKey.currentState!.validate()) {
-      if (selectedBank.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Please select a bank")),
-        );
-        return;
-      }
+      setState(() => isLoading = true);
 
-      User user = User(
+      final user = User(
         name: nameController.text.trim(),
         email: emailController.text.trim(),
         password: passwordController.text,
         bank: selectedBank,
         mobile: mobileController.text.trim(),
       );
+
       try {
         bool success = await ApiService.registerUser(user);
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Registration successful")),
+            const SnackBar(content: Text("Registration successful")),
           );
-          // Nevigation logic
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ReadSms()));
         }
       } catch (e) {
+        debugPrint("Registration error: $e");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.toString())),
         );
+      } finally {
+        setState(() => isLoading = false);
       }
     }
   }
 
   @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    mobileController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildTextField(
+      TextEditingController controller,
+      String label,
+      IconData icon, {
+        bool obscureText = false,
+        TextInputType inputType = TextInputType.text,
+        Widget? suffixIcon,
+        String? Function(String?)? validator,
+      }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: inputType,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        suffixIcon: suffixIcon,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      validator: validator ??
+              (value) =>
+          value == null || value.trim().isEmpty ? "$label cannot be empty" : null,
+    );
+  }
+
+  Widget _buildDropdown() {
+    return DropdownButtonFormField<String>(
+      value: selectedBank.isNotEmpty ? selectedBank : null,
+      decoration: InputDecoration(
+        labelText: "Select Bank",
+        prefixIcon: const Icon(Icons.account_balance),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      items: ['BOI', 'HDFC', 'ICICI', 'SBI'].map((bank) {
+        return DropdownMenuItem(value: bank, child: Text(bank));
+      }).toList(),
+      validator: (value) =>
+      value == null || value.isEmpty ? "Please select a bank" : null,
+      onChanged: (value) {
+        setState(() => selectedBank = value ?? '');
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.indigo.shade50,
       appBar: AppBar(
-        backgroundColor: Colors.indigo,
-        title: const Text('Sign Up'),
+        title: const Text("Create Account"),
         centerTitle: true,
+        backgroundColor: Colors.indigo,
+        elevation: 0,
       ),
-      body: Form(
-        key: formKey,
+      body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          child: Column(
-            children: [
-              TextFormField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                  hintText: "Enter Full Name",
-                  labelText: 'Enter Full Name',
-                  prefixIcon: const Icon(Icons.person_2_outlined),
-                ),
-                validator: (value) =>
-                value!.isEmpty ? "Name cannot be empty" : null,
-              ),
-              TextFormField(
-                controller: mobileController,
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                  hintText: "Enter Mobile Number",
-                  labelText: 'Mobile Number',
-                  prefixIcon: const Icon(Icons.phone_android),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Mobile number cannot be empty";
-                  } else if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-                    return "Enter a valid 10-digit mobile number";
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-
-              TextFormField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                  hintText: "Enter Email",
-                  labelText: 'Enter Email',
-                  prefixIcon: const Icon(Icons.email_outlined),
-                ),
-                validator: (value) =>
-                value!.isEmpty ? "Email cannot be empty" : null,
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: passwordController,
-                obscureText: !isPasswordVisible,
-                decoration: InputDecoration(
-                  hintText: "Enter Password",
-                  labelText: "Password",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isPasswordVisible = !isPasswordVisible;
-                      });
-                    },
-                  ),
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Password is empty";
-                  } else if (value.length < 8) {
-                    return "Password must contain at least 8 characters";
-                  } else if (!RegExp(r'[A-Z]').hasMatch(value)) {
-                    return "Password must contain at least one uppercase letter";
-                  } else if (!RegExp(r'[0-9]').hasMatch(value)) {
-                    return "Password should contain at least one numeric value";
-                  } else if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
-                    return "Password should contain at least one special character";
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              BankDropDownButton(
-                selectedBank: selectedBank,
-                onChanged: (bank) {
-                  setState(() {
-                    selectedBank = bank ?? '';
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Already have an account? ", style: TextStyle(fontSize: 16)),
-                  GestureDetector(
-                    onTap: () {
-                      // Navigate to Login
-                    },
-                    child: const Text(
-                      "Login",
+          padding: const EdgeInsets.all(20),
+          child: Card(
+            elevation: 6,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    Text(
+                      "Register",
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 26,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+                        color: Colors.indigo.shade700,
                       ),
                     ),
-                  )
-                ],
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: handleRegistration,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    const SizedBox(height: 20),
+
+                    _buildTextField(nameController, "Full Name", Icons.person),
+                    const SizedBox(height: 16),
+
+                    _buildTextField(
+                      mobileController,
+                      "Mobile Number",
+                      Icons.phone_android,
+                      inputType: TextInputType.phone,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Mobile number cannot be empty";
+                        } else if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+                          return "Enter a valid 10-digit mobile number";
+                        }
+                        return null;
+                      },
                     ),
-                    backgroundColor: Colors.indigo,
-                  ),
-                  child: const Text(
-                    'Continue',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white,
+                    const SizedBox(height: 16),
+
+                    _buildTextField(
+                      emailController,
+                      "Email",
+                      Icons.email,
+                      inputType: TextInputType.emailAddress,
                     ),
-                  ),
+                    const SizedBox(height: 16),
+
+                    _buildTextField(
+                      passwordController,
+                      "Password",
+                      Icons.lock,
+                      obscureText: !isPasswordVisible,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() => isPasswordVisible = !isPasswordVisible);
+                        },
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Password cannot be empty";
+                        } else if (value.length < 8) {
+                          return "Password must be at least 8 characters";
+                        } else if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                          return "Include at least one uppercase letter";
+                        } else if (!RegExp(r'[0-9]').hasMatch(value)) {
+                          return "Include at least one number";
+                        } else if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) {
+                          return "Include at least one special character";
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    _buildDropdown(),
+                    const SizedBox(height: 24),
+
+                    isLoading
+                        ? const CircularProgressIndicator()
+                        : SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: handleRegistration,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigo,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Register',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Already have an account? "),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const ReadSms()),
+                            );
+                          },
+                          child: Text(
+                            "Login",
+                            style: TextStyle(
+                              color: Colors.indigo.shade700,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),

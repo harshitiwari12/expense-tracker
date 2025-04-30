@@ -4,12 +4,12 @@ import 'package:http/http.dart' as http;
 import '../models/login_model.dart';
 
 class AuthService {
-  final String _baseUrl = "http://<YOUR_BACKEND_IP>:<PORT>"; // Replace with your backend URL
+  final String _baseUrl = "https://ceaf-103-83-80-38.ngrok-free.app"; // Replace with your backend URL
 
   Future<String> login(LoginRequest request) async {
     try {
       final response = await http.post(
-        Uri.parse("$_baseUrl/api/auth/login"),  // Replace with your backend login API endpoint
+        Uri.parse("$_baseUrl/api/users/login"),  // Replace with your backend login API endpoint
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(request.toJson()),
       );

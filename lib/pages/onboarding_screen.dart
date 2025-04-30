@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:new_minor/pages/registration_page.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'otp_login_page.dart';
@@ -31,7 +32,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: TextButton(
               onPressed: () {
                 Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const OTPLoginPage())
+                    MaterialPageRoute(builder: (context) => const RegistrationPage())
                 );
               },
               child: Text(
