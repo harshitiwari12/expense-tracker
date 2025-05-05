@@ -71,8 +71,8 @@ class _ReadSmsState extends State<ReadSms> {
 
     if (amountMatch != null && refMatch != null && date != null) {
       return SmsData(
-        amount: amountMatch.group(1)!,
-        refNo: refMatch.group(1)!,
+        amount: int.tryParse(amountMatch.group(1)!) ?? 0,
+        refNo: int.tryParse(refMatch.group(1)!) ?? 0,
         dateTime: date,
       );
     }

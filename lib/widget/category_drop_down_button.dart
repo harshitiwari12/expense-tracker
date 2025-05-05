@@ -13,12 +13,12 @@ class CategoryDropDownButton extends StatelessWidget {
 
   final List<String> items = const [
     'Groceries',
+    'Medical',
     'Domestic',
     'Shopping',
     'Bills',
-    'Food',
     'Entertainment',
-    'Daily Expenses',
+    'Travelling',
     'Fueling',
     'Educational',
     'Others',

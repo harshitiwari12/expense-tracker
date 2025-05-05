@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:new_minor/widget/category_drop_down_button.dart';
+import '../controllers/get_sms_data.dart';
+
+import '../models/get_sms.dart'; // This is your model: GetSms
 
 class ExpensePage extends StatefulWidget {
   const ExpensePage({super.key});
@@ -9,31 +12,37 @@ class ExpensePage extends StatefulWidget {
 }
 
 class _ExpensePageState extends State<ExpensePage> {
-  // Dummy expense data
-  final List<Map<String, String>> dummyExpenses = [
-    {"amount": "₹150", "date": "2025-04-26"},
-    {"amount": "₹300", "date": "2025-04-25"},
-    {"amount": "₹500", "date": "2025-04-24"},
-  ];
-
-  // List to store selected category for each expense
+  List<GetSms> smsExpenses = [];
   List<String?> selectedCategories = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    // Initialize selectedCategories with null values
-    selectedCategories = List<String?>.filled(dummyExpenses.length, null);
+    fetchSms();
+  }
+
+  Future<void> fetchSms() async {
+    final fetchedSms = await GetSmsData.fetchSmsData(); // Returns List<GetSms>
+    setState(() {
+      smsExpenses = fetchedSms.cast<GetSms>();
+      selectedCategories = List<String?>.filled(smsExpenses.length, null);
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Expenses List')),
-      body: ListView.builder(
-        itemCount: dummyExpenses.length,
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : smsExpenses.isEmpty
+          ? const Center(child: Text('No expenses found.'))
+          : ListView.builder(
+        itemCount: smsExpenses.length,
         itemBuilder: (context, index) {
-          final expense = dummyExpenses[index];
+          final expense = smsExpenses[index];
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: Card(
@@ -64,13 +73,15 @@ class _ExpensePageState extends State<ExpensePage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            expense['amount']!,
+                            expense.amount,
                             style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            expense['date']!,
+                            expense.date,
                             style: const TextStyle(color: Colors.grey),
                           ),
                         ],

@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import '../api/api_urls.dart';
 import '../models/login_model.dart';
 
 class AuthService {
-  final String _baseUrl = "https://ceaf-103-83-80-38.ngrok-free.app"; // Replace with your backend URL
+  final String _baseUrl = ApiUrls.baseURL; // Replace with your backend URL
 
   Future<String> login(LoginRequest request) async {
     try {

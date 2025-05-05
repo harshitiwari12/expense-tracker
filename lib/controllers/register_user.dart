@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../api/api_urls.dart';
 import '../models/user.dart';
 
 class ApiService {
-  static const String _baseUrl = "https://ceaf-103-83-80-38.ngrok-free.app";
+  static const String _baseUrl = ApiUrls.baseURL;
 
   static Future<bool> registerUser(User user) async {
     final url = Uri.parse('$_baseUrl/api/users/register');
@@ -14,14 +16,52 @@ class ApiService {
       body: jsonEncode(user.toJson()),
     );
 
+    print('Response $response');
+    print(response.body);
+
     if (response.statusCode == 201) {
+      final body = jsonDecode(response.body);
+      final token = body['token'];
+
+      // Save token
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('jwt_token', token);
+      print(prefs.getString('jwt_token'));
+      print("Saved JWT token: $token");
+
       return true;
-    }
-    else if (response.statusCode == 409) {
+    } else if (response.statusCode == 409) {
       throw Exception('User already exists');
-    }
-    else {
+    } else {
       throw Exception('Failed to register user');
     }
+  }
+
+  static Future<String?> fetchJwtToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
+    if (token == null) {
+      print("No JWT token found, user is not authenticated.");
+    } else {
+      print("Fetched token: $token");
+    }
+    return token;
+  }
+
+  static Future<void> getSecureData() async {
+    final token = await fetchJwtToken();
+    if (token == null) return;
+
+    final url = Uri.parse('$_baseUrl/api/secure/data');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+      },
+    );
+
+    print("Secure API Response: ${response.body}");
   }
 }

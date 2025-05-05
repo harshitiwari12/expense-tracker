@@ -1,38 +1,42 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../api/api_urls.dart';
 import '../models/sms_data.dart';
 
 class SmsService {
-  static Future<void> sendSmsToBackend(SmsData smsData) async {
-    final url = Uri.parse("https://your-server.com/api/sms/save");
+  static const String _baseUrl = ApiUrls.baseURL;
 
-    // Get the JWT token from secure storage
-    final storage = FlutterSecureStorage();
-    final String? token = await storage.read(key: 'jwt_token'); // Read token from storage
-
-    if (token == null) {
-      print("No JWT token found, user is not authenticated.");
-      return;
-    }
-
+  static Future<bool> sendSmsToBackend(SmsData smsData) async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('jwtToken');
+
+      if (token == null) {
+        print('JWT Token not found.');
+        return false;
+      }
+
       final response = await http.post(
-        url,
+        Uri.parse(_baseUrl),
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",  // Add the JWT token to the header
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
         },
         body: jsonEncode(smsData.toJson()),
       );
 
-      if (response.statusCode == 200) {
-        print("SMS saved successfully: ${smsData.refNo}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('SMS sent successfully.');
+        return true;
       } else {
-        print("Failed to save SMS: ${response.statusCode}");
+        print('Failed to send SMS: ${response.statusCode}');
+        return false;
       }
     } catch (e) {
-      print("Error sending SMS to backend: $e");
+      print('Error sending SMS: $e');
+      return false;
     }
   }
+
 }

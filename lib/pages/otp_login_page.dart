@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:new_minor/controllers/login_user.dart';
-import '../models/login_model.dart';
-import 'home_page.dart';
-import 'otp_verify_page.dart'; // Home page after successful login
+import 'package:lottie/lottie.dart';
+import 'otp_verify_page.dart';
 
 class OTPLoginPage extends StatefulWidget {
   const OTPLoginPage({super.key});
@@ -15,24 +13,37 @@ class OTPLoginPage extends StatefulWidget {
 class _OTPLoginPageState extends State<OTPLoginPage> {
   final TextEditingController _phoneController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool isPasswordVisible = false;
-  TextEditingController passwordController = TextEditingController();
-  final authService = AuthService();
+  bool _isLoading = false;
 
   void _sendOTP() async {
     String phone = _phoneController.text.trim();
+
     if (phone.isEmpty || phone.length < 10) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Enter valid phone number")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Enter a valid 10-digit phone number")),
+      );
       return;
     }
+
+    setState(() {
+      _isLoading = true;
+    });
 
     await _auth.verifyPhoneNumber(
       phoneNumber: "+91$phone",
       verificationCompleted: (PhoneAuthCredential credential) {},
       verificationFailed: (FirebaseAuthException e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed: ${e.message}")));
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("OTP Failed: ${e.message}")),
+        );
       },
       codeSent: (String verificationId, int? resendToken) {
+        setState(() {
+          _isLoading = false;
+        });
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -40,85 +51,72 @@ class _OTPLoginPageState extends State<OTPLoginPage> {
           ),
         );
       },
-      codeAutoRetrievalTimeout: (String verificationId) {},
+      codeAutoRetrievalTimeout: (String verificationId) {
+        setState(() {
+          _isLoading = false;
+        });
+      },
     );
-  }
-
-  // Function to handle login with password and OTP
-  void _loginWithPassword() async {
-    String phone = _phoneController.text.trim();
-    String password = passwordController.text.trim();
-    if (phone.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Enter valid phone number and password")));
-      return;
-    }
-
-    LoginRequest request = LoginRequest(mobileNumber: phone, password: password);
-
-    // Call login API
-    String result = await authService.login(request);
-
-    if (result == "Success") {
-      // Navigate to HomePage after successful login
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Login Failed: $result")));
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login with Phone")),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                labelText: "Enter Phone Number",
-                prefixText: "+91 ",
+      resizeToAvoidBottomInset: true,
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        title: const Text("Login via OTP", style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.indigo,
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              const SizedBox(height: 40),
+              Lottie.asset(
+                'assets/images/send_otp.json',
+                width: 200,
+                height: 200,
+                fit: BoxFit.contain,
               ),
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: passwordController,
-              obscureText: !isPasswordVisible,
-              decoration: InputDecoration(
-                hintText: "Enter Password",
-                labelText: "Password",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                  labelText: "Phone Number",
+                  prefixText: "+91 ",
                 ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              ),
+              const SizedBox(height: 30),
+              _isLoading
+                  ? Column(
+                children: [
+                  const Text("Sending OTP..."),
+                  const SizedBox(height: 10),
+                ],
+              )
+                  : SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: _sendOTP,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.indigo,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      isPasswordVisible = !isPasswordVisible;
-                    });
-                  },
+                  child: const Text(
+                    "Send OTP",
+                    style: TextStyle(color: Colors.white, fontSize: 17),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _loginWithPassword, // Call the login function
-              child: const Text("Login with Password"),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _sendOTP, // Call the OTP function
-              child: const Text("Send OTP"),
-            ),
-          ],
+              const SizedBox(height: 30), // Extra spacing for safety
+            ],
+          ),
         ),
       ),
     );

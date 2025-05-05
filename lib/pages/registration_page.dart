@@ -42,7 +42,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
           );
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ReadSms()));
         }
-      } catch (e) {
+      }
+      catch (e) {
         debugPrint("Registration error: $e");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.toString())),
@@ -111,7 +112,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return Scaffold(
       backgroundColor: Colors.indigo.shade50,
       appBar: AppBar(
-        title: const Text("Create Account"),
+        title: const Text("Create Account",style: TextStyle(color: Colors.white),),
         centerTitle: true,
         backgroundColor: Colors.indigo,
         elevation: 0,
@@ -227,7 +228,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => const ReadSms()),
+                              MaterialPageRoute(builder: (_) => const OTPLoginPage()),
                             );
                           },
                           child: Text(
