@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:another_telephony/telephony.dart';
-import 'package:new_minor/controllers/sms_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
+
+import 'controllers/sms_service.dart';
 import 'models/sms_data.dart';
+
 class ReadSms extends StatefulWidget {
   const ReadSms({super.key});
 
@@ -36,18 +38,22 @@ class _ReadSmsState extends State<ReadSms> {
     List<SmsMessage> filtered = messages.where((msg) {
       final body = msg.body?.toLowerCase() ?? '';
       return body.contains("rs.") &&
-          (body.contains("debited") ||
-              body.contains("transferred")
-          );
+          (body.contains("debited") || body.contains("credited"));
     }).toList();
 
     print("Filtered bank messages: ${filtered.length}");
 
+    List<SmsData> extractedList = [];
+
     for (var msg in filtered) {
       final smsData = extractSmsData(msg);
       if (smsData != null) {
-        await SmsService.sendSmsToBackend(smsData);
+        extractedList.add(smsData);
       }
+    }
+
+    if (extractedList.isNotEmpty) {
+      await SmsService.sendSmsListToBackend(extractedList);
     }
 
     setState(() {
@@ -65,14 +71,14 @@ class _ReadSmsState extends State<ReadSms> {
     final refMatch = refRegex.firstMatch(body);
 
     final date = msg.date != null
-        ? DateFormat('yyyy-MM-dd HH:mm:ss')
-        .format(DateTime.fromMillisecondsSinceEpoch(msg.date!))
+        ? DateTime.fromMillisecondsSinceEpoch(msg.date!)
         : null;
 
-    if (amountMatch != null && refMatch != null && date != null) {
+    if (amountMatch != null && date != null) {
       return SmsData(
-        amount: int.tryParse(amountMatch.group(1)!) ?? 0,
-        refNo: int.tryParse(refMatch.group(1)!) ?? 0,
+        amount: double.tryParse(amountMatch.group(1)!.replaceAll(',', '')) ?? 0.0,
+        refNo: refMatch?.group(1) ?? 'N/A',
+        moneyType: body.contains('debited') ? 'DEBITED' : 'CREDITED',
         dateTime: date,
       );
     }
@@ -83,9 +89,10 @@ class _ReadSmsState extends State<ReadSms> {
     final smsData = extractSmsData(msg);
     if (smsData == null) return 'No valid transaction found.';
 
-    return 'Amount: Rs. ${smsData.amount}\n'
+    return 'Amount: ₹${smsData.amount}\n'
         'Ref: ${smsData.refNo}\n'
-        'Date: ${smsData.dateTime}';
+        'Type: ${smsData.moneyType}\n'
+        'Date: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(smsData.dateTime)}';
   }
 
   @override

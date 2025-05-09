@@ -1,120 +1,70 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:lottie/lottie.dart';
-import 'otp_verify_page.dart';
+import 'package:new_minor/controllers/login_user.dart';
+import 'package:new_minor/read_sms.dart';
+import '../models/login_model.dart';
 
-class OTPLoginPage extends StatefulWidget {
-  const OTPLoginPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<OTPLoginPage> createState() => _OTPLoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _OTPLoginPageState extends State<OTPLoginPage> {
-  final TextEditingController _phoneController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool _isLoading = false;
+class _LoginPageState extends State<LoginPage> {
+  final _mobileController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
-  void _sendOTP() async {
-    String phone = _phoneController.text.trim();
+  Future<void> _handleLogin() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => isLoading = true);
+      final authService = AuthService();
+      final loginRequest = LoginRequest(mobileNo: _mobileController.text);
 
-    if (phone.isEmpty || phone.length < 10) {
+      final result = await authService.login(loginRequest);
+      setState(() => isLoading = false);
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Enter a valid 10-digit phone number")),
+        SnackBar(content: Text(result)),
       );
-      return;
+
+      if (result == "Success") {
+       Navigator.push(context, MaterialPageRoute(builder: (context) => ReadSms(),));
+      }
     }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    await _auth.verifyPhoneNumber(
-      phoneNumber: "+91$phone",
-      verificationCompleted: (PhoneAuthCredential credential) {},
-      verificationFailed: (FirebaseAuthException e) {
-        setState(() {
-          _isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("OTP Failed: ${e.message}")),
-        );
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        setState(() {
-          _isLoading = false;
-        });
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OTPVerifyPage(verificationId: verificationId),
-          ),
-        );
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        setState(() {
-          _isLoading = false;
-        });
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: const Text("Login via OTP", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.indigo,
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
+      appBar: AppBar(title: const Text("Login")),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
           child: Column(
             children: [
-              const SizedBox(height: 40),
-              Lottie.asset(
-                'assets/images/send_otp.json',
-                width: 200,
-                height: 200,
-                fit: BoxFit.contain,
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _phoneController,
+              TextFormField(
+                controller: _mobileController,
                 keyboardType: TextInputType.phone,
                 decoration: const InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
-                  labelText: "Phone Number",
-                  prefixText: "+91 ",
+                  labelText: "Mobile Number",
+                  border: OutlineInputBorder(),
                 ),
+                validator: (value) {
+                  if (value == null || value.length != 10) {
+                    return "Enter a valid 10-digit mobile number";
+                  }
+                  return null;
+                },
               ),
-              const SizedBox(height: 30),
-              _isLoading
-                  ? Column(
-                children: [
-                  const Text("Sending OTP..."),
-                  const SizedBox(height: 10),
-                ],
-              )
-                  : SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: _sendOTP,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigo,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: const Text(
-                    "Send OTP",
-                    style: TextStyle(color: Colors.white, fontSize: 17),
-                  ),
-                ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: isLoading ? null : _handleLogin,
+                child: isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text("Login"),
               ),
-              const SizedBox(height: 30), // Extra spacing for safety
             ],
           ),
         ),

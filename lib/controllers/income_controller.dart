@@ -1,30 +1,36 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../api/api_urls.dart';
+import 'package:new_minor/api/api_urls.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/income.dart';
 
 class IncomeController {
-  final String token;
-  final String apiUrl = ApiUrls.baseURL; // Replace with your real endpoint
+  Future<bool> submitIncome(Income incomeData) async {
+    final url = Uri.parse(
+      '${ApiUrls.baseURL}/api/amount/saveincome?saveing=${incomeData.targetSaving}&income=${incomeData.monthlyIncome}',
+    );
+    final prefs = await SharedPreferences.getInstance();
+    final jwtToken = prefs.getString('jwt_token') ?? '';
 
-  IncomeController({required this.token});
+    if (jwtToken.isEmpty) {
+      print('JWT token not found.');
+      return false;
+    }
 
-  Future<bool> submitIncome(Income income) async {
     final response = await http.post(
-      Uri.parse(apiUrl),
+      url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Include JWT token
+        'Authorization': jwtToken,
       },
-      body: jsonEncode(income.toJson()),
+      body: jsonEncode(incomeData.toJson()),
     );
 
-    if(response.statusCode == 200 || response.statusCode == 201) {
+    if (response.statusCode == 200) {
+      print("Income data submitted successfully.");
       return true;
-    }
-    else{
-      print('Failed to submit income: ${response.statusCode}');
-      print('Response: ${response.body}');
+    } else {
+      print("Failed to submit income data: ${response.body}");
       return false;
     }
   }

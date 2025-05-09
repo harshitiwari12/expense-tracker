@@ -5,17 +5,15 @@ import '../api/api_urls.dart';
 import '../models/login_model.dart';
 
 class AuthService {
-  final String _baseUrl = ApiUrls.baseURL; // Replace with your backend URL
-
   Future<String> login(LoginRequest request) async {
     try {
       final response = await http.post(
-        Uri.parse("$_baseUrl/api/users/login"),  // Replace with your backend login API endpoint
+        Uri.parse("${ApiUrls.baseURL}/api/users/login"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(request.toJson()),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
         final String token = responseData['token'];
 

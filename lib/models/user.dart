@@ -11,7 +11,7 @@ class User{
     'email' : email,
     'password' : password,
     'bank' : bank,
-    'mobile' : mobile
+    'mobileNo' : mobile
   };
 
 }

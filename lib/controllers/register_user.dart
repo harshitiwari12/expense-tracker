@@ -3,19 +3,15 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../api/api_urls.dart';
 import '../models/user.dart';
-
 class ApiService {
   static const String _baseUrl = ApiUrls.baseURL;
-
   static Future<bool> registerUser(User user) async {
     final url = Uri.parse('$_baseUrl/api/users/register');
-
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(user.toJson()),
     );
-
     print('Response $response');
     print(response.body);
 
@@ -23,7 +19,6 @@ class ApiService {
       final body = jsonDecode(response.body);
       final token = body['token'];
 
-      // Save token
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('jwt_token', token);
       print(prefs.getString('jwt_token'));
@@ -46,22 +41,5 @@ class ApiService {
       print("Fetched token: $token");
     }
     return token;
-  }
-
-  static Future<void> getSecureData() async {
-    final token = await fetchJwtToken();
-    if (token == null) return;
-
-    final url = Uri.parse('$_baseUrl/api/secure/data');
-
-    final response = await http.get(
-      url,
-      headers: {
-        'Authorization': token,
-        'Content-Type': 'application/json',
-      },
-    );
-
-    print("Secure API Response: ${response.body}");
   }
 }

@@ -33,8 +33,7 @@ class _IncomeSavingsPageState extends State<IncomeSavingsPage> {
         targetSaving: savings,
       );
 
-      final jwtToken = 'your_jwt_token_here'; // TODO: Replace with actual token retrieval
-      final controller = IncomeController(token: jwtToken);
+      final controller = IncomeController();
       final success = await controller.submitIncome(incomeData);
 
       if (success) {
@@ -48,7 +47,6 @@ class _IncomeSavingsPageState extends State<IncomeSavingsPage> {
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +63,8 @@ class _IncomeSavingsPageState extends State<IncomeSavingsPage> {
           child: Column(
             children: [
               Lottie.asset(
+                'assets/animations/saving_animation.json',
                 height: 300,
-                'assets/animations/saving_animation.json'
               ),
               const SizedBox(height: 20),
               TextFormField(
@@ -74,7 +72,7 @@ class _IncomeSavingsPageState extends State<IncomeSavingsPage> {
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Monthly Income',
-                  prefixIcon: Icon(Icons.currency_rupee_sharp),
+                  prefixIcon: const Icon(Icons.currency_rupee_sharp),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 validator: (value) {
@@ -93,7 +91,7 @@ class _IncomeSavingsPageState extends State<IncomeSavingsPage> {
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Monthly Savings Goal',
-                  prefixIcon: Icon(Icons.account_balance_wallet),
+                  prefixIcon: const Icon(Icons.account_balance_wallet),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 validator: (value) {
@@ -125,7 +123,7 @@ class _IncomeSavingsPageState extends State<IncomeSavingsPage> {
                   ),
                   child: const Text(
                     'Continue',
-                    style: TextStyle(fontSize: 18,color: Colors.white),
+                    style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
               ),
