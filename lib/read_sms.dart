@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:another_telephony/telephony.dart';
+import 'package:new_minor/pages/categorized_expanse_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
 
@@ -16,6 +17,7 @@ class ReadSms extends StatefulWidget {
 class _ReadSmsState extends State<ReadSms> {
   final Telephony telephony = Telephony.instance;
   List<SmsMessage> bankMessages = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -24,9 +26,16 @@ class _ReadSmsState extends State<ReadSms> {
   }
 
   Future<void> fetchBankSMS() async {
+    setState(() {
+      isLoading = true;
+    });
+
     var permission = await Permission.sms.request();
     if (!permission.isGranted) {
       print("SMS permission not granted");
+      setState(() {
+        isLoading = false;
+      });
       return;
     }
 
@@ -58,6 +67,7 @@ class _ReadSmsState extends State<ReadSms> {
 
     setState(() {
       bankMessages = filtered;
+      isLoading = false;
     });
   }
 
@@ -76,7 +86,8 @@ class _ReadSmsState extends State<ReadSms> {
 
     if (amountMatch != null && date != null) {
       return SmsData(
-        amount: double.tryParse(amountMatch.group(1)!.replaceAll(',', '')) ?? 0.0,
+        amount:
+        double.tryParse(amountMatch.group(1)!.replaceAll(',', '')) ?? 0.0,
         refNo: refMatch?.group(1) ?? 'N/A',
         moneyType: body.contains('debited') ? 'DEBITED' : 'CREDITED',
         dateTime: date,
@@ -85,38 +96,126 @@ class _ReadSmsState extends State<ReadSms> {
     return null;
   }
 
-  String formatSmsInfo(SmsMessage msg) {
-    final smsData = extractSmsData(msg);
-    if (smsData == null) return 'No valid transaction found.';
-
-    return 'Amount: ₹${smsData.amount}\n'
-        'Ref: ${smsData.refNo}\n'
-        'Type: ${smsData.moneyType}\n'
-        'Date: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(smsData.dateTime)}';
-  }
-
+  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bank SMS'),
+        title: const Text(
+          'Bank SMS',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.indigo,
         centerTitle: true,
+        elevation: 2,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+        ),
       ),
-      body: bankMessages.isEmpty
-          ? const Center(child: Text('No bank messages found.'))
-          : ListView.builder(
-        itemCount: bankMessages.length,
-        itemBuilder: (context, index) {
-          final sms = bankMessages[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            child: ListTile(
-              title: Text(sms.address ?? 'Unknown Sender'),
-              subtitle: Text(formatSmsInfo(sms)),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator(color: Colors.indigo))
+          : bankMessages.isEmpty
+          ? const Center(
+        child: Text(
+          'No bank messages found.',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey,
+          ),
+        ),
+      )
+          : Column(
+        children: [
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: fetchBankSMS,
+              color: Colors.indigo,
+              child: ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: bankMessages.length,
+                itemBuilder: (context, index) {
+                  final sms = bankMessages[index];
+                  final smsData = extractSmsData(sms);
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 6),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 3,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              sms.address ?? 'Unknown Sender',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.indigo,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              smsData != null
+                                  ? 'Amount: ₹${smsData.amount.toStringAsFixed(2)}\n'
+                                  'Ref: ${smsData.refNo}\n'
+                                  'Type: ${smsData.moneyType}\n'
+                                  'Date: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(smsData.dateTime)}'
+                                  : 'No valid transaction found.',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
-          );
-        },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ExpensePage(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  'Continue',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+
 }

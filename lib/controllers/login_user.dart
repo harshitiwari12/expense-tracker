@@ -8,7 +8,7 @@ class AuthService {
   Future<String> login(LoginRequest request) async {
     try {
       final response = await http.post(
-        Uri.parse("${ApiUrls.baseURL}/api/users/login"),
+        Uri.parse("${ApiUrls.baseURL}/api/users/signin"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(request.toJson()),
       );
@@ -16,7 +16,7 @@ class AuthService {
       if (response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
         final String token = responseData['token'];
-
+        print("JWT TOKEN: ${token}");
         final storage = FlutterSecureStorage();
         await storage.write(key: 'jwt_token', value: token);
 

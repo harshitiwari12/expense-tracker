@@ -6,10 +6,11 @@ import '../api/api_urls.dart';
 
 class SmsFetchController {
   static Future<List<CategorizedSmsData>> fetchCategorizedSms() async {
-    final url = Uri.parse("${ApiUrls.baseURL}/api/sms/getforcategory");
+    final url = Uri.parse("${ApiUrls.baseURL}/api/sms/categorization");
     final prefs = await SharedPreferences.getInstance();
     final jwtToken = prefs.getString('jwt_token') ?? '';
 
+    print("NEW TOKEN:${jwtToken}");
     if (jwtToken.isEmpty) {
       print("JWT token not found.");
       return [];

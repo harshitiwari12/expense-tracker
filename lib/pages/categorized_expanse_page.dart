@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:new_minor/controllers/get_sms_data_controller.dart';
 import 'package:new_minor/controllers/post_sms_category_controller.dart';
 import 'package:new_minor/models/post_sms_category_model.dart';
+import 'package:new_minor/pages/finance_home_page.dart'; // <-- Import your target page
+import 'package:new_minor/pages/income_saving_page.dart';
 import '../widget/category_drop_down_button.dart';
 
 class ExpensePage extends StatefulWidget {
@@ -46,6 +48,14 @@ class _ExpensePageState extends State<ExpensePage> {
             : "Failed to submit categories"),
       ),
     );
+
+    // Navigate to FinanceHomePage after successful submission
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const IncomeSavingsPage()),
+      );
+    }
   }
 
   @override
@@ -78,12 +88,10 @@ class _ExpensePageState extends State<ExpensePage> {
                           SizedBox(
                             width: 150,
                             child: CategoryDropDownButton(
-                              selectedBank:
-                              selectedCategories[index],
+                              selectedBank: selectedCategories[index],
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  selectedCategories[index] =
-                                      newValue;
+                                  selectedCategories[index] = newValue;
                                 });
                               },
                             ),
@@ -91,8 +99,7 @@ class _ExpensePageState extends State<ExpensePage> {
                           const SizedBox(width: 20),
                           Expanded(
                             child: Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
                                   "₹${expense.amount.toStringAsFixed(2)}",
@@ -105,8 +112,7 @@ class _ExpensePageState extends State<ExpensePage> {
                                 Text(
                                   DateFormat('yyyy-MM-dd HH:mm:ss')
                                       .format(expense.dateTime),
-                                  style: const TextStyle(
-                                      color: Colors.grey),
+                                  style: const TextStyle(color: Colors.grey),
                                 ),
                               ],
                             ),
@@ -121,12 +127,35 @@ class _ExpensePageState extends State<ExpensePage> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: 16.0, vertical: 8.0),
+                horizontal: 16.0, vertical: 4.0),
             child: ElevatedButton.icon(
               icon: const Icon(Icons.cloud_upload),
               label: const Text('Submit Categories'),
               onPressed: submitCategories,
               style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 16.0, vertical: 4.0),
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.home),
+              label: const Text('Go to Finance Home'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>IncomeSavingsPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

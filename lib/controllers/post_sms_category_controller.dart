@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../api/api_urls.dart';
 class SmsPostController {
   static Future<bool> submitCategorizedSms(List<CategorizedSmsData> smsList) async {
-    final url = Uri.parse("${ApiUrls.baseURL}/api/sms/updatecategory");
+    final url = Uri.parse("${ApiUrls.baseURL}/api/sms/categorization");
     final prefs = await SharedPreferences.getInstance();
     final jwtToken = prefs.getString('jwt_token') ?? '';
 

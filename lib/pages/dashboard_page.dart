@@ -1,66 +1,136 @@
 import 'package:flutter/material.dart';
-import '../controllers/dashboard_controller.dart';
-import '../models/dashboard_data_model.dart';
+import 'package:fl_chart/fl_chart.dart';
+import '../controllers/get_category_total.dart';
+import '../models/total_expense_model.dart';
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({Key? key}) : super(key: key);
+  const DashboardPage({super.key});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  DashboardDataModel? dashboardData;
+  CategoryTotals? totals;
   bool isLoading = true;
+
+  // ✅ Category color mapping (used in pie chart and list tiles)
+  final Map<String, Color> categoryColors = {
+    'Groceries': Colors.red,
+    'Medical': Colors.green,
+    'Domestic': Colors.blue,
+    'Shopping': Colors.orange,
+    'Bills': Colors.purple,
+    'Entertainment': Colors.teal,
+    'Travelling': Colors.brown,
+    'Fueling': Colors.cyan,
+    'Educational': Colors.indigo,
+    'Others': Colors.pink,
+  };
 
   @override
   void initState() {
     super.initState();
-    loadDashboardData();
+    fetchCategoryTotals();
   }
 
-  Future<void> loadDashboardData() async {
-    final data = await DashboardController.fetchDashboardData();
+  Future<void> fetchCategoryTotals() async {
+    final result = await GetCategoryTotalsController.fetchCategoryTotals();
     setState(() {
-      dashboardData = data;
+      totals = result;
       isLoading = false;
     });
   }
 
-  Widget buildInfoCard(String title, String value, Color color) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      elevation: 4,
-      child: ListTile(
-        tileColor: color.withOpacity(0.1),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(value),
-      ),
-    );
+  Map<String, double> prepareData(CategoryTotals data) {
+    return {
+      'Groceries': data.groceries,
+      'Medical': data.medical,
+      'Domestic': data.domestic,
+      'Shopping': data.shopping,
+      'Bills': data.bills,
+      'Entertainment': data.entertainment,
+      'Travelling': data.travelling,
+      'Fueling': data.fueling,
+      'Educational': data.educational,
+      'Others': data.others,
+    }..removeWhere((key, value) => value == 0); // remove empty categories
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Dashboard"),
+        title: const Text('Expense Category Breakdown',
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.blue.shade800,
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : dashboardData == null
-          ? const Center(child: Text("Failed to load dashboard data."))
-          : ListView(
-        children: [
-          buildInfoCard("Username", dashboardData!.username, Colors.blue),
-          buildInfoCard("Mobile No", dashboardData!.mobileNo, Colors.green),
-          buildInfoCard("Bank", dashboardData!.bankName, Colors.deepPurple),
-          buildInfoCard("Email", dashboardData!.email, Colors.orange),
-          buildInfoCard("Monthly Income", "₹${dashboardData!.monthlyIncome}", Colors.teal),
-          buildInfoCard("Target Saving", "₹${dashboardData!.targetSaving}", Colors.cyan),
-          buildInfoCard("Total Expense", "₹${dashboardData!.totalExpense}", Colors.redAccent),
-          buildInfoCard("Total Saving", "₹${dashboardData!.totalSaving}", Colors.indigo),
-        ],
+          : totals == null
+          ? const Center(child: Text('Failed to load data'))
+          : Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            const Text(
+              'Total Expense Distribution',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: PieChart(
+                PieChartData(
+                  sections: buildSections(prepareData(totals!)),
+                  sectionsSpace: 2,
+                  centerSpaceRadius: 40,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView(
+                children: prepareData(totals!).entries.map((entry) {
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: categoryColors[entry.key] ?? Colors.grey,
+                      radius: 8,
+                    ),
+                    title: Text(entry.key),
+                    trailing: Text('₹${entry.value.toStringAsFixed(2)}'),
+                  );
+                }).toList(),
+              ),
+            )
+          ],
+        ),
       ),
     );
+  }
+
+  List<PieChartSectionData> buildSections(Map<String, double> data) {
+    final total = data.values.reduce((a, b) => a + b);
+    return data.entries.map((entry) {
+      final color = categoryColors[entry.key] ?? Colors.grey;
+      final value = entry.value;
+      final title = '${(value / total * 100).toStringAsFixed(1)}%';
+
+      return PieChartSectionData(
+        color: color,
+        value: value,
+        title: title,
+        radius: 60,
+        titleStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      );
+    }).toList();
   }
 }

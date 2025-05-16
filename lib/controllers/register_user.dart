@@ -6,7 +6,7 @@ import '../models/user.dart';
 class ApiService {
   static const String _baseUrl = ApiUrls.baseURL;
   static Future<bool> registerUser(User user) async {
-    final url = Uri.parse('$_baseUrl/api/users/register');
+    final url = Uri.parse('$_baseUrl/api/users/signup');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -27,7 +27,8 @@ class ApiService {
       return true;
     } else if (response.statusCode == 409) {
       throw Exception('User already exists');
-    } else {
+    }
+    else{
       throw Exception('Failed to register user');
     }
   }
@@ -37,7 +38,8 @@ class ApiService {
     final token = prefs.getString('jwt_token');
     if (token == null) {
       print("No JWT token found, user is not authenticated.");
-    } else {
+    }
+    else{
       print("Fetched token: $token");
     }
     return token;

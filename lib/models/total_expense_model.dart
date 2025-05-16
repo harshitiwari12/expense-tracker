@@ -40,9 +40,7 @@ class CategoryTotals {
       fueling: (json['fueling'] ?? 0).toDouble(),
       educational: (json['educational'] ?? 0).toDouble(),
       others: (json['others'] ?? 0).toDouble(),
-      datetime: json['datetime'] != null
-          ? DateTime.parse(json['datetime'])
-          : DateTime.now(),
+      datetime: _parseDateTime(json['datetime']),
     );
   }
 
@@ -61,5 +59,12 @@ class CategoryTotals {
       'others': others,
       'datetime': datetime.toIso8601String(),
     };
+  }
+
+  static DateTime _parseDateTime(dynamic dt) {
+    if (dt == null) return DateTime.now();
+    if (dt is DateTime) return dt;
+    if (dt is String) return DateTime.tryParse(dt) ?? DateTime.now();
+    return DateTime.now(); // fallback
   }
 }

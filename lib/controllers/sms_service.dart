@@ -15,7 +15,7 @@ class SmsService {
     }
 
     final payload = SmsPayload(sms: smsList);
-    final uri = Uri.parse('${ApiUrls.baseURL}/api/sms/saved');
+    final uri = Uri.parse('${ApiUrls.baseURL}/api/sms/save');
 
     try {
       final response = await http.post(

@@ -5,7 +5,6 @@ import 'package:new_minor/models/total_expense_model.dart';
 
 class CategoryTotalsPage extends StatefulWidget {
   const CategoryTotalsPage({super.key});
-
   @override
   State<CategoryTotalsPage> createState() => _CategoryTotalsPageState();
 }

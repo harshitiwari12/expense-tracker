@@ -29,7 +29,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
       final user = User(
         name: nameController.text.trim(),
         email: emailController.text.trim(),
-        password: passwordController.text,
         bank: selectedBank,
         mobile: mobileController.text.trim(),
       );
@@ -58,7 +57,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
   void dispose() {
     nameController.dispose();
     emailController.dispose();
-    passwordController.dispose();
     mobileController.dispose();
     super.dispose();
   }
@@ -165,37 +163,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       inputType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
-
-                    _buildTextField(
-                      passwordController,
-                      "Password",
-                      Icons.lock,
-                      obscureText: !isPasswordVisible,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                        ),
-                        onPressed: () {
-                          setState(() => isPasswordVisible = !isPasswordVisible);
-                        },
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Password cannot be empty";
-                        } else if (value.length < 8) {
-                          return "Password must be at least 8 characters";
-                        } else if (!RegExp(r'[A-Z]').hasMatch(value)) {
-                          return "Include at least one uppercase letter";
-                        } else if (!RegExp(r'[0-9]').hasMatch(value)) {
-                          return "Include at least one number";
-                        } else if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) {
-                          return "Include at least one special character";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
                     _buildDropdown(),
                     const SizedBox(height: 24),
 

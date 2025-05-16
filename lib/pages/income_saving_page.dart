@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-
+import 'package:new_minor/pages/finance_home_page.dart';
 import '../controllers/income_controller.dart';
 import '../models/income.dart';
 
@@ -40,6 +40,12 @@ class _IncomeSavingsPageState extends State<IncomeSavingsPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Income and savings saved successfully!')),
         );
+
+        // Navigate to FinanceHomePage
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const FinanceHomePage()),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to save data. Please try again.')),
@@ -47,6 +53,7 @@ class _IncomeSavingsPageState extends State<IncomeSavingsPage> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
