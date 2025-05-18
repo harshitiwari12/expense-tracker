@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:new_minor/api/secure_helper_functions.dart';
 import '../api/api_urls.dart';
 import '../models/login_model.dart';
 
@@ -16,17 +16,16 @@ class AuthService {
       if (response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
         final String token = responseData['token'];
-        print("JWT TOKEN: ${token}");
-        final storage = FlutterSecureStorage();
-        await storage.write(key: 'jwt_token', value: token);
+        print("JWT TOKEN: $token");
 
+        await SecureStorageHelper.saveToken(token);
+
+        print("Token saved successfully");
         return "Success";
-      }
-      else{
+      } else {
         return "Failed";
       }
-    }
-    catch (e){
+    } catch (e) {
       return "Error: $e";
     }
   }

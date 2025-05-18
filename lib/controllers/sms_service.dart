@@ -1,15 +1,16 @@
 import 'package:http/http.dart' as http;
-import 'package:new_minor/api/api_urls.dart';
+import 'package:new_minor/api/secure_helper_functions.dart';
 import 'dart:convert';
+import '../api/api_urls.dart';
 import '../models/sms_data.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 class SmsService {
   static Future<void> sendSmsListToBackend(List<SmsData> smsList) async {
-    final prefs = await SharedPreferences.getInstance();
-    final jwtToken = prefs.getString('jwt_token') ?? '';
+    final jwtToken = await SecureStorageHelper.getToken(); // Use secure storage
 
-    if (jwtToken.isEmpty) {
+    print('JWT Token found in Read SMS Page');
+    if (jwtToken == null || jwtToken.isEmpty) {
       print("JWT token not found. User might not be logged in.");
       return;
     }
@@ -22,12 +23,12 @@ class SmsService {
         uri,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':'$jwtToken',
+          'Authorization': jwtToken,
         },
         body: jsonEncode(payload.toJson()),
       );
 
-      print("JWT Token: $jwtToken");
+      print("JWT Token of read sms page: $jwtToken");
       print("Response: ${response.statusCode} - ${response.body}");
 
       if (response.statusCode == 200) {
@@ -40,4 +41,3 @@ class SmsService {
     }
   }
 }
-

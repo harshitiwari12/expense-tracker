@@ -1,3 +1,4 @@
-class ApiUrls{
-  static const String baseURL = 'https://8d01-43-229-224-179.ngrok-free.app';
+class ApiUrls
+{
+  static const String baseURL = 'https://e7cc-103-83-80-39.ngrok-free.app';
 }

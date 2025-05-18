@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:new_minor/pages/dashboard_page.dart';
 import 'package:new_minor/read_sms.dart';
 
 class OTPScreen extends StatefulWidget {
@@ -29,7 +30,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const ReadSms()),
+        MaterialPageRoute(builder: (_) => const DashboardPage()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,16 +1,15 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:new_minor/api/secure_helper_functions.dart';
 import '../models/dashboard_data_model.dart';
 import '../api/api_urls.dart';
 
 class DashboardController {
   static Future<DashboardDataModel?> fetchDashboardData() async {
     final url = Uri.parse('${ApiUrls.baseURL}/api/users/profile');
-    final prefs = await SharedPreferences.getInstance();
-    final jwtToken = prefs.getString('jwt_token') ?? '';
+    final jwtToken = await SecureStorageHelper.getToken(); // Securely get token
 
-    if (jwtToken.isEmpty) {
+    if (jwtToken == null || jwtToken.isEmpty) {
       print("JWT token not found.");
       return null;
     }
