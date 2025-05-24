@@ -1,50 +1,70 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:new_minor/api/api_urls.dart';
-import 'package:new_minor/models/email_model.dart';
 
-class EmailVerificationService {
-  static Future<EmailVerificationResponse?> sendEmailVerification(String email) async {
-    final url = Uri.parse('${ApiUrls.baseURL}/api/send-email-otp');
-
+class EmailOtpService {
+  // Method to send OTP to email
+  static Future<bool> sendOtpToEmail(String email) async {
     try {
-      final response = await http.post(
+      final url = Uri.parse('${ApiUrls.baseURL}/api/emailVerification/sendOtp?email=$email');
+
+      final response = await http.get(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(EmailVerificationRequest(email: email).toJson()),
       );
 
+      print('Send OTP - Status Code: ${response.statusCode}');
+      print('Send OTP - Response Body: ${response.body}');
+
       if (response.statusCode == 200) {
-        return EmailVerificationResponse.fromJson(jsonDecode(response.body));
+        try {
+          final body = jsonDecode(response.body);
+          return body['status'] == true;
+        } catch (e) {
+          print('JSON decode error: $e');
+          throw Exception('Invalid JSON response: ${response.body}');
+        }
       } else {
-        print('Failed to send OTP: ${response.statusCode}');
+        throw Exception("Failed to send OTP: ${response.statusCode}");
       }
     } catch (e) {
-      print('Exception while sending OTP: $e');
+      print(e);
+      throw Exception("Failed to send OTP: $e");
     }
-
-    return null;
   }
 
-  static Future<EmailVerificationResponse?> verifyEmailOtp(String email, String otp) async {
-    final url = Uri.parse('${ApiUrls.baseURL}/api/verify-email-otp');
-
+  // Method to verify the OTP
+  static Future<bool> verifyEmailOtp(String email, String otp) async {
     try {
-      final response = await http.post(
+      // Properly formatted URL without spaces
+      final url = Uri.parse('${ApiUrls.baseURL}/api/emailVerification/verifyOtp?email=$email&otp=$otp');
+
+      final response = await http.get(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(EmailVerificationRequest(email: email, otp: otp).toJson()),
       );
 
+      print('Verify OTP - Status Code: ${response.statusCode}');
+      print('Verify OTP - Response Body: ${response.body}');
+
       if (response.statusCode == 200) {
-        return EmailVerificationResponse.fromJson(jsonDecode(response.body));
+        try {
+          final body = jsonDecode(response.body);
+          return body['status'] == true;
+        } catch (e) {
+          print('JSON decode error: $e');
+          throw Exception('Invalid JSON response: ${response.body}');
+        }
       } else {
-        print('Failed to verify OTP: ${response.statusCode}');
+        throw Exception("OTP Verification Failed: ${response.statusCode}");
       }
     } catch (e) {
-      print('Exception while verifying OTP: $e');
+      print(e);
+      throw Exception("OTP Verification Failed: $e");
     }
-
-    return null;
   }
 }
+
+//api/emailVerification/sendOtp?email=$email
+
+//api/emailVerification/verifyOtp?email = ${email} & otp=${emailOtp}
