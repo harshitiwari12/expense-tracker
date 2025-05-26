@@ -55,101 +55,191 @@ class _LoginPageState extends State<LoginPage> {
           codeAutoRetrievalTimeout: (String verificationId) {},
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.width < 600;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Login"),
-        centerTitle: true,
-        backgroundColor: Colors.indigo,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
-        ),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Container(
-            width: width < 500 ? double.infinity : 400,
-            padding: const EdgeInsets.all(24),
+      body: Stack(
+        children: [
+          Container(
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.indigo.withOpacity(0.1),
-                  blurRadius: 10,
-                  spreadRadius: 2,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    "Welcome Back",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.indigo,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  TextFormField(
-                    controller: _mobileController,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      labelText: "Mobile Number",
-                      prefixIcon: Icon(Icons.phone),
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.length != 10) {
-                        return "Enter a valid 10-digit mobile number";
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.indigo,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: isLoading ? null : _handleLogin,
-                      child: isLoading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text(
-                        "Login",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.indigo.shade700,
+                  Colors.blue.shade600,
                 ],
               ),
             ),
           ),
-        ),
+          Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(isSmallScreen ? 20 : 40),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        const FlutterLogo(size: 80),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Welcome Back",
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 28 : 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          "Sign in to continue",
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 16 : 18,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+                    Card(
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(isSmallScreen ? 24 : 32),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                "Login",
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 24 : 28,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.indigo,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 24),
+                              TextFormField(
+                                controller: _mobileController,
+                                keyboardType: TextInputType.phone,
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 16 : 18,
+                                ),
+                                decoration: InputDecoration(
+                                  labelText: "Mobile Number",
+                                  prefixIcon: const Icon(Icons.phone_android,
+                                      color: Colors.indigo),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                    horizontal: 16,
+                                  ),
+                                  prefixText: '+91 ',
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.length != 10) {
+                                    return "Please enter a valid 10-digit mobile number";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 32),
+                              SizedBox(
+                                height: isSmallScreen ? 50 : 56,
+                                child: ElevatedButton(
+                                  onPressed: isLoading ? null : _handleLogin,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.indigo,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 4,
+                                  ),
+                                  child: isLoading
+                                      ? const SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                      : Text(
+                                    "SEND OTP",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize:
+                                      isSmallScreen ? 16 : 18,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    GestureDetector(
+                      onTap: () {
+                        // Navigate to sign up page
+                      },
+                      child: RichText(
+                        text: const TextSpan(
+                          style:
+                          TextStyle(color: Colors.white70, fontSize: 14),
+                          children: [
+                            TextSpan(text: "Don't have an account? "),
+                            TextSpan(
+                              text: "Sign up",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
-      backgroundColor: Colors.grey[100],
     );
+  }
+
+  @override
+  void dispose() {
+    _mobileController.dispose();
+    super.dispose();
   }
 }

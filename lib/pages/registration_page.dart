@@ -431,7 +431,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         const Text("Already have an account? "),
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(builder: (_) => const LoginPage()),
                             );

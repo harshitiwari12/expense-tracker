@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:new_minor/pages/finance_home_page.dart';
+
+import 'package:new_minor/pages/profile_page.dart';
 import 'package:new_minor/pages/registration_page.dart';
 
 void main() async {
@@ -20,6 +23,7 @@ class MyApp extends StatelessWidget {
         );
       },
       home: RegistrationPage()
+
     );
   }
 }

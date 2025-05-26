@@ -4,6 +4,7 @@ import 'package:new_minor/controllers/get_category_total.dart';
 import 'package:new_minor/models/total_expense_model.dart';
 import 'package:new_minor/pages/category_transaction_history.dart';
 import 'package:new_minor/pages/dashboard_page.dart';
+import 'package:new_minor/pages/profile_page.dart';
 import '../controllers/dashboard_controller.dart';
 import '../models/dashboard_data_model.dart';
 
@@ -94,7 +95,7 @@ class _FinanceHomePageState extends State<FinanceHomePage> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => DashboardPage()),
+                            MaterialPageRoute(builder: (context) => ProfilePage()),
                           );
                         },
                         child: const CircleAvatar(
@@ -187,17 +188,17 @@ class _FinanceHomePageState extends State<FinanceHomePage> {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.deepPurple,
-          onPressed: () {
-            // Navigate to the desired page
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => DashboardPage()),
-            );
-          },
-          child: const Icon(Icons.add, color: Colors.white),
-        ),
+        // floatingActionButton: FloatingActionButton(
+        //   backgroundColor: Colors.deepPurple,
+        //   onPressed: () {
+        //     // Navigate to the desired page
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(builder: (_) => DashboardPage()),
+        //     );
+        //   },
+        //   child: const Icon(Icons.add, color: Colors.white),
+        // ),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:another_telephony/telephony.dart';
-import 'package:new_minor/pages/categorized_expanse_page.dart';
+import 'package:new_minor/pages/finance_home_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
 
@@ -196,10 +196,10 @@ class _ReadSmsState extends State<ReadSms> {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ExpensePage(),
+                      builder: (context) => FinanceHomePage(),
                     ),
                   );
                 },

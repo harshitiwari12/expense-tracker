@@ -14,7 +14,6 @@ class _DashboardPageState extends State<DashboardPage> {
   CategoryTotals? totals;
   bool isLoading = true;
 
-  // ✅ Category color mapping (used in pie chart and list tiles)
   final Map<String, Color> categoryColors = {
     'Groceries': Colors.red,
     'Medical': Colors.green,
