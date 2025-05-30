@@ -32,7 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
       "color": Colors.green
     },
     {
-      "title": "Budget Planner",
+      "title": "Past Transactions",
       "icon": Icons.currency_rupee,
       "page": const ReadSms(),
       "color": Colors.orange

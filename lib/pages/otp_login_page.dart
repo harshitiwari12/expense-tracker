@@ -37,8 +37,12 @@ class _LoginPageState extends State<LoginPage> {
             );
           },
           verificationFailed: (FirebaseAuthException e) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const ReadSms()),
+            );
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("OTP failed: ${e.message}")),
+              SnackBar(content: Text("OTP failed: ${e.message}"))
             );
           },
           codeSent: (String verificationId, int? resendToken) {

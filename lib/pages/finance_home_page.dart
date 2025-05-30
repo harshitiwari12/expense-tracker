@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:new_minor/controllers/get_category_total.dart';
 import 'package:new_minor/models/total_expense_model.dart';
 import 'package:new_minor/pages/category_transaction_history.dart';
-import 'package:new_minor/pages/dashboard_page.dart';
 import 'package:new_minor/pages/profile_page.dart';
 import '../controllers/dashboard_controller.dart';
 import '../models/dashboard_data_model.dart';
@@ -118,7 +117,7 @@ class _FinanceHomePageState extends State<FinanceHomePage> {
                   const Text('Target Saving', style: TextStyle(color: Colors.white70)),
                   const SizedBox(height: 4),
                   Text(
-                    '₹${dashboardData?.targetSaving.toStringAsFixed(2) ?? '0.00'}',
+                    '₹${dashboardData?.targetSaving.toStringAsFixed(2) ?? ''}',
                     style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -258,7 +257,7 @@ class _FinanceHomePageState extends State<FinanceHomePage> {
             backgroundColor: color.withOpacity(0.15),
             child: Icon(icon, color: color, size: 24),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

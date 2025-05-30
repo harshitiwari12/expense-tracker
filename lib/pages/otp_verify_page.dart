@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:new_minor/pages/dashboard_page.dart';
-import 'package:new_minor/pages/finance_home_page.dart';
+import 'package:new_minor/pages/profile_page.dart';
 
 class OTPScreen extends StatefulWidget {
   final String phoneNumber;
@@ -36,7 +35,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const FinanceHomePage()),
+        MaterialPageRoute(builder: (_) => const ProfilePage()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -141,7 +140,7 @@ class _OTPScreenState extends State<OTPScreen> {
                             : Text(
                           "Verify",
                           style: theme.textTheme.titleLarge?.copyWith(
-                            color: theme.colorScheme.onPrimary,
+                            color: Colors.indigo,
                           ),
                         ),
                       ),

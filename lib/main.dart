@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:new_minor/pages/finance_home_page.dart';
-
-import 'package:new_minor/pages/profile_page.dart';
-import 'package:new_minor/pages/registration_page.dart';
-
+import 'package:new_minor/pages/SplashScreen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -22,8 +18,7 @@ class MyApp extends StatelessWidget {
           child: child!,
         );
       },
-      home: RegistrationPage()
-
+      home: SplashScreen()
     );
   }
 }

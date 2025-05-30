@@ -2,7 +2,6 @@ import 'package:http/http.dart' as http;
 import 'package:new_minor/api/api_urls.dart';
 
 class EmailOtpService {
-  // Method to send OTP to email
   static Future<bool> sendOtpToEmail(String email) async {
     try {
       final url = Uri.parse('${ApiUrls.baseURL}/api/emailVerification/sendOtp?email=$email');
@@ -30,7 +29,6 @@ class EmailOtpService {
     }
   }
 
-  // Method to verify the OTP
   static Future<bool> verifyEmailOtp(String email, String otp) async {
     try {
       final url = Uri.parse('${ApiUrls.baseURL}/api/emailVerification/verifyOtp?email=$email&otp=$otp');
