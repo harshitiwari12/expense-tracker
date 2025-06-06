@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:new_minor/pages/income_saving_page.dart';
 import 'package:new_minor/pages/profile_page.dart';
 
 class OTPScreen extends StatefulWidget {
@@ -35,7 +36,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const ProfilePage()),
+        MaterialPageRoute(builder: (_) => ProfilePage()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

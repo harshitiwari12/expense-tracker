@@ -1,7 +1,7 @@
 class GetSmsData {
   final int id;
   final double amount;
-  final String refNo;
+  final String? refNo;
   final String? category;
   final String moneyType;
   final DateTime dateTime;

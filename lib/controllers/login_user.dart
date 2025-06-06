@@ -13,7 +13,7 @@ class AuthService {
         body: jsonEncode(request.toJson()),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 201){
         final responseData = jsonDecode(response.body);
         final String token = responseData['token'];
         print("JWT TOKEN: $token");

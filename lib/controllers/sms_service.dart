@@ -4,10 +4,9 @@ import 'dart:convert';
 import '../api/api_urls.dart';
 import '../models/sms_data.dart';
 
-
 class SmsService {
   static Future<void> sendSmsListToBackend(List<SmsData> smsList) async {
-    final jwtToken = await SecureStorageHelper.getToken(); // Use secure storage
+    final jwtToken = await SecureStorageHelper.getToken();
 
     print('JWT Token found in Read SMS Page');
     if (jwtToken == null || jwtToken.isEmpty) {
@@ -31,7 +30,7 @@ class SmsService {
       print("JWT Token of read sms page: $jwtToken");
       print("Response: ${response.statusCode} - ${response.body}");
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 204) {
         print("SMS data list sent successfully");
       } else {
         print("Failed to send SMS data list: ${response.statusCode}");

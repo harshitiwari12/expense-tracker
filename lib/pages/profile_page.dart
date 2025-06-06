@@ -3,6 +3,7 @@ import 'package:new_minor/controllers/dashboard_controller.dart';
 import 'package:new_minor/pages/categorized_expanse_page.dart';
 import 'package:new_minor/pages/dashboard_page.dart';
 import 'package:new_minor/pages/finance_home_page.dart';
+import 'package:new_minor/pages/income_saving_page.dart';
 import 'package:new_minor/pages/registration_page.dart';
 import 'package:new_minor/read_sms.dart';
 import '../models/dashboard_data_model.dart';
@@ -43,12 +44,12 @@ class _ProfilePageState extends State<ProfilePage> {
       "page": const DashboardPage(),
       "color": Colors.purple
     },
-    // {
-    //   "title": "Settings",
-    //   "icon": Icons.settings,
-    //   "page": SettingsPage(), // Replace with your actual page widget
-    //   "color": Colors.grey
-    // },
+    {
+      "title": "Saving Goals",
+      "icon": Icons.settings,
+       "page": const IncomeSavingsPage(),
+      "color": Colors.grey
+      },
   ];
 
   @override

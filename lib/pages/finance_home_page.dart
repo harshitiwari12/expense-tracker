@@ -244,7 +244,7 @@ class _FinanceHomePageState extends State<FinanceHomePage> {
     required double amount,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
@@ -253,9 +253,9 @@ class _FinanceHomePageState extends State<FinanceHomePage> {
       child: Row(
         children: [
           CircleAvatar(
-            radius: 24,
+            radius: 23,
             backgroundColor: color.withOpacity(0.15),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: 23),
           ),
           const SizedBox(width: 15),
           Expanded(
