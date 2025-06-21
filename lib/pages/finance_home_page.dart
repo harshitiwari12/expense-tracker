@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:new_minor/controllers/get_category_total.dart';
 import 'package:new_minor/models/total_expense_model.dart';
 import 'package:new_minor/pages/category_transaction_history.dart';
@@ -9,7 +10,6 @@ import '../models/dashboard_data_model.dart';
 
 class FinanceHomePage extends StatefulWidget {
   const FinanceHomePage({Key? key}) : super(key: key);
-
   @override
   State<FinanceHomePage> createState() => _FinanceHomePageState();
 }
@@ -74,7 +74,7 @@ class _FinanceHomePageState extends State<FinanceHomePage> {
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 25.h),
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Color(0xFF836FFF), Color(0xFFBCA3F7)],
@@ -89,7 +89,8 @@ class _FinanceHomePageState extends State<FinanceHomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Welcome back 👋", style: TextStyle(color: Colors.white70, fontSize: 16)),
+                      Text("Welcome back 👋",
+                          style: TextStyle(color: Colors.white70, fontSize: 16.sp)),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -104,27 +105,28 @@ class _FinanceHomePageState extends State<FinanceHomePage> {
                       )
                     ],
                   ),
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3.h),
                   Text(
                     dashboardData?.username ?? '',
-                    style: const TextStyle(
-                      fontSize: 24,
+                    style: TextStyle(
+                      fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 18),
-                  const Text('Target Saving', style: TextStyle(color: Colors.white70)),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 18.h),
+                  Text('Target Saving',
+                      style: TextStyle(color: Colors.white70, fontSize: 14.sp)),
+                  SizedBox(height: 4.h),
                   Text(
                     '₹${dashboardData?.targetSaving.toStringAsFixed(2) ?? ''}',
-                    style: const TextStyle(
-                      fontSize: 30,
+                    style: TextStyle(
+                      fontSize: 30.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -145,24 +147,24 @@ class _FinanceHomePageState extends State<FinanceHomePage> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+            SizedBox(height: 20.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Row(
                 children: [
                   Text(
                     'Category Wise Expense',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10.h),
             Expanded(
               child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                 itemCount: _buildCategoryList(totals!).length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                separatorBuilder: (_, __) => SizedBox(height: 8.h),
                 itemBuilder: (context, index) {
                   final item = _buildCategoryList(totals!)[index];
                   return GestureDetector(
@@ -187,48 +189,37 @@ class _FinanceHomePageState extends State<FinanceHomePage> {
             ),
           ],
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   backgroundColor: Colors.deepPurple,
-        //   onPressed: () {
-        //     // Navigate to the desired page
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(builder: (_) => DashboardPage()),
-        //     );
-        //   },
-        //   child: const Icon(Icons.add, color: Colors.white),
-        // ),
       ),
     );
   }
 
   Widget _amountCard(String imagePath, String label, String value, Color color) {
     return Container(
-      width: 150,
-      height: 70,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      width: 150.w,
+      height: 70.h,
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: color.withOpacity(0.4), blurRadius: 10)],
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [BoxShadow(color: color.withOpacity(0.4), blurRadius: 10.r)],
       ),
       child: Row(
         children: [
           Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18)),
-            child: Center(child: Image.asset(imagePath, width: 22, height: 22)),
+            width: 36.w,
+            height: 36.h,
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18.r)),
+            child: Center(child: Image.asset(imagePath, width: 22.w, height: 22.h)),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10.w),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: const TextStyle(color: Colors.white, fontSize: 13)),
+              Text(label, style: TextStyle(color: Colors.white, fontSize: 13.sp)),
               Text(value,
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15.sp)),
             ],
           )
         ],
@@ -244,31 +235,31 @@ class _FinanceHomePageState extends State<FinanceHomePage> {
     required double amount,
   }) {
     return Container(
-      padding: const EdgeInsets.all(15),
+      padding: EdgeInsets.all(15.r),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
+        borderRadius: BorderRadius.circular(15.r),
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4.r)],
       ),
       child: Row(
         children: [
           CircleAvatar(
-            radius: 23,
+            radius: 23.r,
             backgroundColor: color.withOpacity(0.15),
-            child: Icon(icon, color: color, size: 23),
+            child: Icon(icon, color: color, size: 23.sp),
           ),
-          const SizedBox(width: 15),
+          SizedBox(width: 15.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                Text(subtitle, style: const TextStyle(color: Colors.black54)),
+                Text(title, style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600)),
+                Text(subtitle, style: TextStyle(color: Colors.black54, fontSize: 13.sp)),
               ],
             ),
           ),
           Text('₹${amount.toStringAsFixed(2)}',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp)),
         ],
       ),
     );

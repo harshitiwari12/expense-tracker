@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:new_minor/controllers/dashboard_controller.dart';
 import 'package:new_minor/pages/categorized_expanse_page.dart';
 import 'package:new_minor/pages/dashboard_page.dart';
@@ -20,36 +21,11 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isLoading = true;
 
   final List<Map<String, dynamic>> features = [
-    {
-      "title": "Category Expense",
-      "icon": Icons.list_alt,
-      "page": const ExpensePage(),
-      "color": Colors.blue
-    },
-    {
-      "title": "Dashboard",
-      "icon": Icons.dashboard,
-      "page": const FinanceHomePage() ,
-      "color": Colors.green
-    },
-    {
-      "title": "Past Transactions",
-      "icon": Icons.currency_rupee,
-      "page": const ReadSms(),
-      "color": Colors.orange
-    },
-    {
-      "title": "Report",
-      "icon": Icons.bar_chart,
-      "page": const DashboardPage(),
-      "color": Colors.purple
-    },
-    {
-      "title": "Saving Goals",
-      "icon": Icons.settings,
-       "page": const IncomeSavingsPage(),
-      "color": Colors.grey
-      },
+    {"title": "Category Expense", "icon": Icons.list_alt, "page": ExpensePage(), "color": Colors.blue},
+    {"title": "Dashboard", "icon": Icons.dashboard, "page": FinanceHomePage(), "color": Colors.green},
+    {"title": "Past Transactions", "icon": Icons.currency_rupee, "page": ReadSms(), "color": Colors.orange},
+    {"title": "Report", "icon": Icons.bar_chart, "page": DashboardPage(), "color": Colors.purple},
+    {"title": "Saving Goals", "icon": Icons.settings, "page": IncomeSavingsPage(), "color": Colors.grey},
   ];
 
   @override
@@ -74,14 +50,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("My Profile"),
+        title: Text("My Profile", style: TextStyle(fontSize: 18.sp)),
         centerTitle: true,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: Icon(Icons.logout, size: 20.sp),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationPage(),));
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const RegistrationPage()));
             },
           ),
         ],
@@ -93,35 +69,28 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 50, color: Colors.red),
-            const SizedBox(height: 16),
-            const Text("Failed to load data"),
-            const SizedBox(height: 16),
+            Icon(Icons.error_outline, size: 50.sp, color: Colors.red),
+            SizedBox(height: 16.h),
+            Text("Failed to load data", style: TextStyle(fontSize: 16.sp)),
+            SizedBox(height: 16.h),
             ElevatedButton(
               onPressed: _loadDashboardData,
-              child: const Text("Retry"),
+              child: Text("Retry", style: TextStyle(fontSize: 14.sp)),
             ),
           ],
         ),
       )
           : SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Profile Header
             _buildProfileHeader(context),
-            const SizedBox(height: 24),
-
-            // Financial Overview Cards
+            SizedBox(height: 24.h),
             _buildFinancialOverview(context, screenWidth),
-            const SizedBox(height: 24),
-
-            // User Details Section
+            SizedBox(height: 24.h),
             _buildUserDetailsSection(theme),
-            const SizedBox(height: 24),
-
-            // Features Section
+            SizedBox(height: 24.h),
             _buildFeaturesSection(theme, isDarkMode),
           ],
         ),
@@ -141,54 +110,46 @@ class _ProfilePageState extends State<ProfilePage> {
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: Theme.of(context).primaryColor,
-                    width: 2,
+                    width: 2.w,
                   ),
                 ),
                 child: CircleAvatar(
-                  radius: 50,
+                  radius: 50.r,
                   backgroundColor: Colors.grey[200],
                   child: ClipOval(
                     child: Image.asset(
                       'assets/images/img.png',
-                      width: 90,
-                      height: 90,
+                      width: 90.w,
+                      height: 90.h,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Icon(
-                        Icons.person,
-                        size: 50,
-                        color: Colors.grey[600],
-                      ),
+                      errorBuilder: (_, __, ___) => Icon(Icons.person, size: 50.sp, color: Colors.grey[600]),
                     ),
                   ),
                 ),
               ),
               Container(
-                padding: const EdgeInsets.all(6),
+                padding: EdgeInsets.all(6.r),
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.camera_alt,
-                  size: 18,
-                  color: Colors.white,
-                ),
+                child: Icon(Icons.camera_alt, size: 18.sp, color: Colors.white),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           Text(
             dashboardData!.username,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 22,
+              fontSize: 22.sp,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4.h),
           Text(
             dashboardData!.email,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontSize: 16,
+              fontSize: 16.sp,
               color: Colors.grey,
             ),
           ),
@@ -199,36 +160,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildFinancialOverview(BuildContext context, double screenWidth) {
     return SizedBox(
-      height: 120,
+      height: 120.h,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
-          _buildFinancialCard(
-            context: context,
-            title: "Monthly Income",
-            amount: dashboardData!.monthlyIncome,
-            icon: Icons.arrow_upward,
-            color: Colors.green,
-            width: screenWidth * 0.45,
-          ),
-          const SizedBox(width: 12),
-          _buildFinancialCard(
-            context: context,
-            title: "Total Expense",
-            amount: dashboardData!.totalExpense,
-            icon: Icons.arrow_downward,
-            color: Colors.red,
-            width: screenWidth * 0.45,
-          ),
-          const SizedBox(width: 12),
-          _buildFinancialCard(
-            context: context,
-            title: "Target Saving",
-            amount: dashboardData!.targetSaving,
-            icon: Icons.savings,
-            color: Colors.blue,
-            width: screenWidth * 0.45,
-          ),
+          _buildFinancialCard(context: context, title: "Monthly Income", amount: dashboardData!.monthlyIncome, icon: Icons.arrow_upward, color: Colors.green, width: screenWidth * 0.45),
+          SizedBox(width: 12.w),
+          _buildFinancialCard(context: context, title: "Total Expense", amount: dashboardData!.totalExpense, icon: Icons.arrow_downward, color: Colors.red, width: screenWidth * 0.45),
+          SizedBox(width: 12.w),
+          _buildFinancialCard(context: context, title: "Target Saving", amount: dashboardData!.targetSaving, icon: Icons.savings, color: Colors.blue, width: screenWidth * 0.45),
         ],
       ),
     );
@@ -246,36 +186,22 @@ class _ProfilePageState extends State<ProfilePage> {
       width: width,
       child: Card(
         elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.r),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Icon(icon, color: color, size: 20),
+                  Text(title, style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500)),
+                  Icon(icon, color: color, size: 20.sp),
                 ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                "₹${amount.toStringAsFixed(2)}",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
+              SizedBox(height: 8.h),
+              Text("₹${amount.toStringAsFixed(2)}",
+                  style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: color)),
             ],
           ),
         ),
@@ -286,27 +212,20 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildUserDetailsSection(ThemeData theme) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Personal Details",
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
+            Text("Personal Details",
+                style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+            SizedBox(height: 12.h),
             _buildDetailRow(Icons.phone, "Mobile", dashboardData!.mobileNo),
-            const Divider(height: 24),
+            Divider(height: 24.h),
             _buildDetailRow(Icons.account_balance, "Bank", dashboardData!.bankName),
-            const Divider(height: 24),
-            _buildDetailRow(Icons.money, "Remaining Limit",
-                "₹${dashboardData!.totalSaving.toStringAsFixed(2)}"),
+            Divider(height: 24.h),
+            _buildDetailRow(Icons.money, "Remaining Limit", "₹${dashboardData!.totalSaving.toStringAsFixed(2)}"),
           ],
         ),
       ),
@@ -316,27 +235,15 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildDetailRow(IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: Colors.grey[600]),
-        const SizedBox(width: 16),
+        Icon(icon, size: 20.sp, color: Colors.grey[600]),
+        SizedBox(width: 16.w),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              Text(label, style: TextStyle(fontSize: 12.sp, color: Colors.grey[600])),
+              SizedBox(height: 4.h),
+              Text(value, style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500)),
             ],
           ),
         ),
@@ -348,27 +255,21 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Features",
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
+        Text("Features", style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+        SizedBox(height: 12.h),
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
+            crossAxisSpacing: 12.w,
+            mainAxisSpacing: 12.h,
             childAspectRatio: 1.5,
           ),
           itemCount: features.length,
           itemBuilder: (context, index) {
             final feature = features[index];
-            final page = feature['page'] as Widget?; // Safe cast with null check
-
+            final page = feature['page'] as Widget?;
             return _buildFeatureCard(
               context: context,
               title: feature['title'],
@@ -376,14 +277,7 @@ class _ProfilePageState extends State<ProfilePage> {
               color: feature['color'],
               onTap: () {
                 if (page != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => page),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Page not available')),
-                  );
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => page));
                 }
               },
             );
@@ -402,37 +296,25 @@ class _ProfilePageState extends State<ProfilePage> {
   }) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(9),
+          padding: EdgeInsets.all(9.r),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(12.r),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.3),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 24,
-                ),
+                child: Icon(icon, color: color, size: 24.sp),
               ),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              SizedBox(height: 12.h),
+              Text(title, textAlign: TextAlign.center, style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500)),
             ],
           ),
         ),

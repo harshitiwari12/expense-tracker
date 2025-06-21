@@ -53,7 +53,7 @@ class _DashboardPageState extends State<DashboardPage> {
       'Fueling': data.fueling,
       'Educational': data.educational,
       'Others': data.others,
-    }..removeWhere((key, value) => value == 0); // remove empty categories
+    }..removeWhere((key, value) => value == 0);
   }
 
   @override
@@ -69,7 +69,7 @@ class _DashboardPageState extends State<DashboardPage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : totals == null
-          ? const Center(child: Text('Failed to load data'))
+          ? const Center(child: Text('Data not found'))
           : Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
