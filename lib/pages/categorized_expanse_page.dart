@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:new_minor/controllers/get_sms_data_controller.dart';
 import 'package:new_minor/controllers/post_sms_category_controller.dart';
 import 'package:new_minor/models/post_sms_category_model.dart';
-import 'package:new_minor/pages/finance_home_page.dart'; // <-- Import your target page
+import 'package:new_minor/pages/finance_home_page.dart';
 import 'package:new_minor/pages/income_saving_page.dart';
 import '../widget/category_drop_down_button.dart';
 
@@ -53,7 +53,7 @@ class _ExpensePageState extends State<ExpensePage> {
     if (success) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const IncomeSavingsPage()),
+        MaterialPageRoute(builder: (context) => const FinanceHomePage()),
       );
     }
   }
@@ -150,7 +150,8 @@ class _ExpensePageState extends State<ExpensePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>IncomeSavingsPage()),
+                      builder: (context) =>IncomeSavingsPage()
+                  ),
                 );
               },
               style: ElevatedButton.styleFrom(

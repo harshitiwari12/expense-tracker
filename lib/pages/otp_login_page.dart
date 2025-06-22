@@ -102,7 +102,10 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     Column(
                       children: [
-                        const FlutterLogo(size: 80),
+                         Container(
+                              width: 200,
+                             height: 200,
+                             child: Image.asset('assets/images/splash_logo.png')),
                         const SizedBox(height: 16),
                         Text(
                           "Welcome Back",

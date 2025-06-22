@@ -197,7 +197,7 @@ class _FinanceHomePageState extends State<FinanceHomePage> {
     return Container(
       width: 150.w,
       height: 70.h,
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(20.r),

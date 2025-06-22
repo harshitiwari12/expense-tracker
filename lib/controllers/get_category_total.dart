@@ -7,7 +7,7 @@ import '../models/total_expense_model.dart';
 class GetCategoryTotalsController {
   static Future<CategoryTotals?> fetchCategoryTotals() async {
     final url = Uri.parse("${ApiUrls.baseURL}/api/categories/amount");
-    final jwtToken = await SecureStorageHelper.getToken(); // Fetch securely
+    final jwtToken = await SecureStorageHelper.getToken(); 
 
     if (jwtToken == null || jwtToken.isEmpty) {
       print("JWT token not found.");
